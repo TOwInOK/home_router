@@ -1,1 +1,0 @@
-/Users/dmitryfefilov/Documents/Rust/home_controller/home_router/target/debug/libsmartLibrary.rlib: /Users/dmitryfefilov/Documents/Rust/home_controller/home_router/src/homeRouter.rs /Users/dmitryfefilov/Documents/Rust/home_controller/home_router/src/mod.rs
