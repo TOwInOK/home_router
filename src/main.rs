@@ -1,14 +1,14 @@
 pub mod home_router;
-use home_router::{socket::*, termometr::*, *};
+use home_router::Comntroller;
 fn main() {
-    let socket1 = Socket::new("SoketName".to_string(), 20, true);
-    let termometr1 = Termometr::new("TermoName".to_string(), -20, true);
-    let mut socket_list = SocketList::new();
-    socket_list.add(socket1);
-    let mut termometr_list = TermometrtList::new();
-    termometr_list.add(termometr1);
-    let room1 = Room::new("Room1".to_string(), socket_list, termometr_list);
-    let mut library = Lib::new();
-    library.add(room1);
-    library.get_info();
+    //убрать uuid
+    let mut hub = Comntroller::new();
+    hub.add("Test1".to_string());
+    hub.get_info();
+    hub.add_socket("Test1".to_string(), "name".to_string(), "4132f".to_string(), 254, false);
+    hub.add_termometr("Test1".to_string(), "name2".to_string(), "r32fecr".to_string(), false, -20);
+    hub.online_switcher("name2".to_string(), "Test1".to_string());
+    hub.find_device("name2".to_string(), "Test1".to_string());
+    hub.add_socket("Test1".to_string(), "name32".to_string(), "4132f".to_string(), 254, false);
+    hub.get_info();
 }
