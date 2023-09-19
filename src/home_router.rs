@@ -113,15 +113,20 @@ impl Comntroller {
         }
     }
     //Функция для поиска устройства по ключу и вывода на экран
-    // Появился трейт
-    // pub fn find_device(&mut self, key: String, room_name: String) {
-    //     match self.find_room(&room_name) {
-    //         Ok(room) => room.get_device_mut(&key).get_info(),
-    //         Err(error) => {
-    //             println!("{error}");
-    //         }
-    //     }
-    // }
+    // Аналог трейта
+    pub fn get_device_state(&mut self,  room_name: String, device_name: String) {
+        match self.find_room(&room_name) {
+            Ok(room) => match room.get_device_mut(&device_name) {
+                Ok(device) => {
+                    println!("Name: {} | {}", device_name, device)
+                }
+                Err(error) => println!("{error}"),
+            },
+            Err(error) => {
+                println!("{error}");
+            }
+        }
+    }
     // Меняем тумблер включения устройства
     pub fn online_switcher(&mut self, key: String, room_name: String) {
         match self.find_room(&room_name) {
@@ -151,8 +156,6 @@ impl<T: Debug> GetInfo for T {
         println!();
     }
 }
-
-
 
 impl Default for Comntroller {
     fn default() -> Self {
