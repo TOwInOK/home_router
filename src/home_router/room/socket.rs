@@ -1,15 +1,10 @@
 #[derive(PartialEq, Debug)]
 pub struct Socket {
-    uuid: String,
-    power: u8,
-    online: bool,
+    pub power: u8,
+    pub online: bool,
 }
 impl Socket {
-    pub fn new(uuid: String, power: u8, online: bool) -> Self {
-        Self { uuid, power, online}
-    }
-    pub fn online(&mut self) {
-        self.online = !self.online
+    pub fn new(power: u8, online: bool) -> Self {
+        Self { power, online }
     }
 }
-

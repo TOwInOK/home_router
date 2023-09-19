@@ -1,15 +1,13 @@
 #[derive(PartialEq, Debug)]
 pub struct Termometr {
-    uuid: String,
-    temperature: i8,
-    online: bool,
+    pub temperature: i8,
+    pub online: bool,
 }
-
 impl Termometr {
-    pub fn new(uuid: String, temperature: i8, online: bool) -> Self {
-        Self { uuid, temperature, online}
-    }
-    pub fn online(&mut self) {
-        self.online = !self.online
+    pub fn new(temperature: i8, online: bool) -> Self {
+        Self {
+            temperature,
+            online,
+        }
     }
 }
