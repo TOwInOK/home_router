@@ -61,11 +61,14 @@ impl Room {
             Device::TermometrDevice(termometr) => termometr.switch(),
         }
     }
-    pub fn list(&self) {
+    pub fn list(&self) -> String {
+        let mut output: String = Default::default();
         for device in self.devices.iter().enumerate() {
             let d = device.1;
-            println!("ID:{} | Name: {} | Type: {}", device.0, d.0, d.1);
+            let info = &format!("ID:{} | Name: {} | Type: {}\n", device.0, d.0, d.1);
+            output += info;
         }
+        output
     }
 }
 
@@ -86,12 +89,16 @@ impl Display for Device {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self {
             Device::SocketDevice(socket) => {
-                write!(f, "Power: {} | Online: {}", socket.power, socket.online)
+                write!(
+                    f,
+                    "Soket: Power: {} | Online: {}",
+                    socket.power, socket.online
+                )
             }
             Device::TermometrDevice(termometr) => {
                 write!(
                     f,
-                    "Temperature: {} | Online: {}",
+                    "Termomert: Temperature: {} | Online: {}",
                     termometr.temperature, termometr.online
                 )
             }

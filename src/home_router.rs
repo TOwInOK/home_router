@@ -54,7 +54,7 @@ impl Comntroller {
     //выводит все устройства в конкретной комнате
     pub fn device_list(&mut self, room_name: String) {
         match self.find_room(&room_name) {
-            Ok(room) => room.list(),
+            Ok(room) => println!("Room name: {}\nDevices:\n{}", room_name, room.list()),
             Err(error) => {
                 println!("{error}")
             }
@@ -136,6 +136,20 @@ impl Comntroller {
             }
         }
     }
+    //Кидаем репорты в доте.
+    pub fn create_report(&mut self) -> String {
+        let mut output: String = Default::default();
+        output += "START\n\n";
+        for local_room in self.rooms.iter_mut() {
+            output += &format!(
+                "Room name: {}\nDevices:\n{}\n",
+                local_room.name,
+                local_room.list()
+            )
+        }
+        output += "END\n";
+        output
+    }
 }
 //выводим отладочную инфу о всех типах
 //используем для вывода как "json" для логов.
@@ -144,16 +158,16 @@ trait GetInfo {
 }
 impl<T: Debug> GetInfo for T {
     fn get_info(&self) {
-        let output = format!("||| {:?} |||", self);
-        for _ in 0..output.len() {
-            print!("-")
-        }
-        println!();
+        let output = format!("{:?}", self);
+        // for _ in 0..output.len() {
+        //     print!("-")
+        // }
+        // println!();
         println!("{}", output);
-        for _ in 0..output.len() {
-            print!("-")
-        }
-        println!();
+        // for _ in 0..output.len() {
+        //     print!("-")
+        // }
+        // println!();
     }
 }
 

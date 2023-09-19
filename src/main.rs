@@ -8,6 +8,10 @@ fn main() {
     hub.add("Test4".to_string());
     hub.add_socket("Test1".to_string(), "name".to_string(), 254, false);
     hub.add_termometr("Test1".to_string(), "name2".to_string(), false, -20);
+    hub.add_termometr("Test1".to_string(), "name3".to_string(), false, -20);
+    hub.add_termometr("Test1".to_string(), "name5".to_string(), false, -20);
+    hub.add_socket("Test1".to_string(), "nam32e".to_string(), 254, false);
+    hub.add_socket("Test1".to_string(), "name323".to_string(), 254, false);
     //меняем строку состояния
     hub.online_switcher("name2".to_string(), "Test1".to_string());
     hub.add_socket("Test1".to_string(), "name32".to_string(), 254, false);
@@ -20,6 +24,9 @@ fn main() {
     hub.device_list("Test1".to_string());
     println!("Пример поиска устройства");
     hub.get_device_state("Test1".to_string(), "name".to_string());
+    println!("Создаём отчёт по всем комнатам");
+    let report = hub.create_report();
+    println!("{}", report);
 }
 
 // trait DeviceStateProvider {
