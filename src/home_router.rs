@@ -114,7 +114,7 @@ impl Comntroller {
     }
     //Функция для поиска устройства по ключу и вывода на экран
     // Аналог трейта
-    pub fn get_device_state(&mut self,  room_name: String, device_name: String) {
+    pub fn get_device_state(&mut self, room_name: String, device_name: String) {
         match self.find_room(&room_name) {
             Ok(room) => match room.get_device_mut(&device_name) {
                 Ok(device) => {
