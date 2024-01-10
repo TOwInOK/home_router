@@ -28,23 +28,3 @@ fn main() {
     let report = hub.create_report();
     println!("{}", report);
 }
-
-// trait DeviceStateProvider {
-//     fn get_device_state(&mut self, room_name: String, device_name: String);
-// }
-// //аналог функции...
-// impl DeviceStateProvider for Comntroller {
-//     fn get_device_state(&mut self, room_name: String, device_name: String) {
-//         match self.find_room(&room_name) {
-//             Ok(room) => match room.get_device_mut(&device_name) {
-//                 Ok(device) => {
-//                     println!("Name: {} | {}", device_name, device)
-//                 }
-//                 Err(error) => println!("{error}"),
-//             },
-//             Err(error) => {
-//                 println!("{error}");
-//             }
-//         }
-//     }
-// }

@@ -1,6 +1,6 @@
 pub mod socket;
 pub mod termometr;
-use log::{error as le, info as li};
+use log::info as li;
 use socket::*;
 use std::{
     collections::HashMap,
@@ -29,7 +29,7 @@ impl Room {
     }
     //add socket override
     pub fn add_socket(&mut self, name: String, power: u8, online: bool) {
-        li!("Get device list {:#?}", &Room::list(&self));
+        li!("Get device list {:#?}", &Room::list(self));
 
         let socket = Socket::new(power, online);
         li!("Create socket: {:#?}", &socket);
@@ -92,11 +92,13 @@ trait OnlineSwitcher {
 }
 impl OnlineSwitcher for Socket {
     fn switch(&mut self) {
+        li!("Switch from {}", self.online);
         self.online = !self.online;
     }
 }
 impl OnlineSwitcher for Termometr {
     fn switch(&mut self) {
+        li!("Switch from {}", self.online);
         self.online = !self.online;
     }
 }

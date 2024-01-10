@@ -1,7 +1,7 @@
 pub mod room;
-use std::{collections::HashMap, fmt::Debug};
-
+use log::{error as le, info as li};
 use room::*;
+use std::{collections::HashMap, fmt::Debug};
 
 #[derive(Debug)]
 pub struct Comntroller {
@@ -14,9 +14,10 @@ impl Comntroller {
     pub fn add(&mut self, name: String) {
         let room = self.create_room(name);
         if !(self.rooms.contains(&room)) {
+            li!("Комната была создана: {:#?}", &room);
             self.rooms.push(room)
         } else {
-            println!("Комната уже создана")
+            le!("Комната уже создана")
         }
     }
     //Выборка информации для всего
@@ -39,24 +40,24 @@ impl Comntroller {
             .position(|room| room.name == room_name)
         {
             self.rooms.remove(index);
-            println!("Комната была удалена.")
+            li!("Комната была удалена.")
         } else {
-            println!("Данной комнаты не оказалось.")
+            le!("Данной комнаты не оказалось.")
         }
     }
     //если переделывать для клиент сервер, то отправлять Vec либо Hash, но не String
     //выводит все комнаты в хабе
     pub fn list(&self) {
         for local_room in self.rooms.iter().enumerate() {
-            println!("ID: {} | Name: {}", &local_room.0, &local_room.1.name);
+            li!("ID: {} | Name: {}", &local_room.0, &local_room.1.name);
         }
     }
     //выводит все устройства в конкретной комнате
     pub fn device_list(&mut self, room_name: String) {
         match self.find_room(&room_name) {
-            Ok(room) => println!("Room name: {}\nDevices:\n{}", room_name, room.list()),
+            Ok(room) => li!("Room name: {}\nDevices:\n{}", room_name, room.list()),
             Err(error) => {
-                println!("{error}")
+                le!("{error}")
             }
         }
     }
@@ -65,15 +66,15 @@ impl Comntroller {
         match self.find_room(&room_name) {
             Ok(room) => match room.get_device_mut(&name) {
                 Ok(_device) => {
-                    println!("Устройство {} уже сушествует", &name)
+                    li!("Устройство {} уже сушествует", &name)
                 }
                 Err(error) => {
-                    println!("{}, было создано новое с именем {}", error, &name);
+                    le!("{}, было создано новое с именем {}", error, &name);
                     room.add_socket(name, power, online)
                 }
             },
             Err(error) => {
-                println!("{error}");
+                le!("{error}");
             }
         }
     }
@@ -88,15 +89,15 @@ impl Comntroller {
         match self.find_room(&room_name) {
             Ok(room) => match room.get_device_mut(&name) {
                 Ok(_device) => {
-                    println!("Устройство {} уже сушествует", &name)
+                    li!("Устройство {} уже сушествует", &name)
                 }
                 Err(error) => {
-                    println!("{}, было создано новое с именем {}", error, &name);
+                    le!("{}, было создано новое с именем {}", error, &name);
                     room.add_termometr(name, temperature, online)
                 }
             },
             Err(error) => {
-                println!("{error}");
+                le!("{error}");
             }
         }
     }
@@ -113,17 +114,16 @@ impl Comntroller {
         }
     }
     //Функция для поиска устройства по ключу и вывода на экран
-    // Аналог трейта
     pub fn get_device_state(&mut self, room_name: String, device_name: String) {
         match self.find_room(&room_name) {
             Ok(room) => match room.get_device_mut(&device_name) {
                 Ok(device) => {
-                    println!("Name: {} | {}", device_name, device)
+                    li!("Name: {} | {}", device_name, device)
                 }
-                Err(error) => println!("{error}"),
+                Err(e) => le!("{e}"),
             },
-            Err(error) => {
-                println!("{error}");
+            Err(e) => {
+                le!("{e}");
             }
         }
     }
@@ -132,11 +132,11 @@ impl Comntroller {
         match self.find_room(&room_name) {
             Ok(room) => room.online_switcher(&key),
             Err(error) => {
-                println!("{error}");
+                le!("{error}");
             }
         }
     }
-    //Кидаем репорты в доте.
+    //Делаем отчёт.
     pub fn create_report(&mut self) -> String {
         let mut output: String = Default::default();
         output += "START\n\n";
@@ -151,23 +151,15 @@ impl Comntroller {
         output
     }
 }
-//выводим отладочную инфу о всех типах
-//используем для вывода как "json" для логов.
+
+//Get info about any object
 trait GetInfo {
     fn get_info(&self);
 }
 impl<T: Debug> GetInfo for T {
     fn get_info(&self) {
-        let output = format!("{:?}", self);
-        // for _ in 0..output.len() {
-        //     print!("-")
-        // }
-        // println!();
-        println!("{}", output);
-        // for _ in 0..output.len() {
-        //     print!("-")
-        // }
-        // println!();
+        let output = format!("{:#?}", self);
+        li!("{}", output);
     }
 }
 
