@@ -1,10 +1,14 @@
 pub mod socket;
 pub mod termometr;
-use std::collections::HashMap;
-use std::fmt::{self, Display, Formatter};
-
+use log::{error as le, info as li};
 use socket::*;
+use std::{
+    collections::HashMap,
+    fmt::{self, Display, Formatter},
+};
 use termometr::*;
+use thiserror::Error;
+
 #[derive(Debug, PartialEq)]
 pub enum Device {
     SocketDevice(Socket),
@@ -17,13 +21,22 @@ pub struct Room {
     devices: HashMap<String, Device>,
 }
 impl Room {
+    //initialiseit new socket
     pub fn new(name: String, devices: HashMap<String, Device>) -> Self {
+        li!("Create new room with name: {}", &name);
+        li!("Devices in {} is: {:#?}", &name, devices);
         Self { name, devices }
     }
     //add socket override
     pub fn add_socket(&mut self, name: String, power: u8, online: bool) {
+        li!("Get device list {:#?}", &Room::list(&self));
+
         let socket = Socket::new(power, online);
+        li!("Create socket: {:#?}", &socket);
+
         let device = Device::SocketDevice(socket);
+        li!("Change device list to: {:#?}", &device);
+
         self.devices.insert(name, device);
     }
     //add termometr override
@@ -33,9 +46,10 @@ impl Room {
         self.devices.insert(name, device);
     }
     //remove object by Key(String)
-    pub fn rm(&mut self, name: String) {
-        self.devices.remove(&name);
+    pub fn rm(&mut self, key: String) {
+        self.devices.remove(&key);
     }
+    //find some room by using name
     pub fn find_room_by_name(&self, name_to_find: &str) -> Option<&Room> {
         if self.name == name_to_find {
             Some(self)
@@ -43,12 +57,12 @@ impl Room {
             None
         }
     }
-    //Выдаём мутабельную ссылку на устройство
-    pub fn get_device_mut(&mut self, key: &str) -> Result<&mut Device, &'static str> {
+    //Get mutable link about device
+    pub fn get_device_mut(&mut self, key: &str) -> Result<&mut Device, Errors> {
         if let Some(device) = self.devices.get_mut(key) {
             Ok(device)
         } else {
-            Err("Устройство не найдено")
+            Err(Errors::NotFound)
         }
     }
     //Меняем орие.. состояние устройства
@@ -61,6 +75,7 @@ impl Room {
             Device::TermometrDevice(termometr) => termometr.switch(),
         }
     }
+    ///Get console output of the Devices into
     pub fn list(&self) -> String {
         let mut output: String = Default::default();
         for device in self.devices.iter().enumerate() {
@@ -104,4 +119,10 @@ impl Display for Device {
             }
         }
     }
+}
+
+#[derive(Debug, Error)]
+pub enum Errors {
+    #[error("Nothing has found")]
+    NotFound,
 }
