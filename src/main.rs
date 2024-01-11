@@ -1,6 +1,6 @@
 pub mod home_router;
 use home_router::Comntroller;
-use log::info;
+use log::info as li;
 fn main() {
     pretty_env_logger::formatted_builder().filter_level(log::LevelFilter::Trace).init();
     let mut hub = Comntroller::new();
@@ -18,15 +18,15 @@ fn main() {
     hub.online_switcher("name2".to_string(), "Test1".to_string());
     hub.add_socket("Test1".to_string(), "name32".to_string(), 254, false);
     hub.delete_room("Test2".to_string());
-    info!("Получений raw info");
+    li!("Получений raw info");
     hub.get_info();
-    info!("Получаем отформатированный список комнат в хабе");
+    li!("Получаем отформатированный список комнат в хабе");
     hub.list();
-    info!("Получаем список устройсв в конкретной комнате");
+    li!("Получаем список устройсв в конкретной комнате");
     hub.device_list("Test1".to_string());
-    info!("Пример поиска устройства");
+    li!("Пример поиска устройства");
     hub.get_device_state("Test1".to_string(), "name".to_string());
-    info!("Создаём отчёт по всем комнатам");
+    li!("Создаём отчёт по всем комнатам");
     let report = hub.create_report();
-    info!("{}", report);
+    li!("{}", report);
 }
