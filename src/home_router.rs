@@ -1,12 +1,14 @@
-pub mod room;
+pub mod device;
 use log::{error as le, info as li};
-use room::*;
 use std::{collections::HashMap, fmt::Debug};
-
+use crate::home_router::device::room::Room;
+use crate::home_router::device::room::infogetter::GetInfo;
+use crate::home_router::device::Device;
 #[derive(Debug)]
 pub struct Comntroller {
     rooms: Vec<Room>,
 }
+
 impl Comntroller {
     pub fn new() -> Self {
         Self { rooms: Vec::new() }
@@ -20,19 +22,19 @@ impl Comntroller {
             le!("Комната уже создана")
         }
     }
-    //Выборка информации для всего
+    ///Выборка информации для всего
     pub fn get_info(&mut self) {
         for room in &self.rooms {
             room.get_info()
         }
     }
-    //Добавление комнаты
+    ///Добавление комнаты
     fn create_room(&mut self, name: String) -> Room {
         let hmap = HashMap::<String, Device>::new();
         let room: Room = Room::new(name, hmap);
         room
     }
-    //Переделать в Ok|Err (если надо повышенная абстракция)
+    ///Удаляем комнату
     pub fn delete_room(&mut self, room_name: String) {
         if let Some(index) = self
             .rooms
@@ -45,14 +47,13 @@ impl Comntroller {
             le!("Данной комнаты не оказалось.")
         }
     }
-    //если переделывать для клиент сервер, то отправлять Vec либо Hash, но не String
-    //выводит все комнаты в хабе
+    ///Выводит все комнаты в хабе
     pub fn list(&self) {
         for local_room in self.rooms.iter().enumerate() {
             li!("ID: {} | Name: {}", &local_room.0, &local_room.1.name);
         }
     }
-    //выводит все устройства в конкретной комнате
+    ///Выводит все устройства в конкретной комнате
     pub fn device_list(&mut self, room_name: String) {
         match self.find_room(&room_name) {
             Ok(room) => li!("Room name: {}\nDevices:\n{}", room_name, room.list()),
@@ -61,7 +62,7 @@ impl Comntroller {
             }
         }
     }
-    //Добавляем розетку, поиск через функцию получения ссылки
+    ///Добавляем розетку, поиск через функцию получения ссылки
     pub fn add_socket(&mut self, room_name: String, name: String, power: u8, online: bool) {
         match self.find_room(&room_name) {
             Ok(room) => match room.get_device_mut(&name) {
@@ -78,7 +79,7 @@ impl Comntroller {
             }
         }
     }
-    //термометр реализован по той же схеме что и добавление розетки
+    ///Термометр реализован по той же схеме что и добавление розетки
     pub fn add_termometr(
         &mut self,
         room_name: String,
@@ -101,7 +102,7 @@ impl Comntroller {
             }
         }
     }
-    //Функция для поиска комнаты
+    ///Функция для поиска комнаты
     pub fn find_room(&mut self, name: &str) -> Result<&mut Room, &'static str> {
         if let Some(room) = self
             .rooms
@@ -113,7 +114,7 @@ impl Comntroller {
             Err("Комната не была найдена")
         }
     }
-    //Функция для поиска устройства по ключу и вывода на экран
+    ///Функция для поиска устройства по ключу и вывода на экран
     pub fn get_device_state(&mut self, room_name: String, device_name: String) {
         match self.find_room(&room_name) {
             Ok(room) => match room.get_device_mut(&device_name) {
@@ -127,7 +128,7 @@ impl Comntroller {
             }
         }
     }
-    // Меняем тумблер включения устройства
+    /// Меняем тумблер включения устройства
     pub fn online_switcher(&mut self, key: String, room_name: String) {
         match self.find_room(&room_name) {
             Ok(room) => room.online_switcher(&key),
@@ -136,7 +137,7 @@ impl Comntroller {
             }
         }
     }
-    //Делаем отчёт.
+    ///Создаёться отчёт по структуре
     pub fn create_report(&mut self) -> String {
         let mut output: String = Default::default();
         output += "START\n\n";
@@ -152,19 +153,4 @@ impl Comntroller {
     }
 }
 
-//Get info about any object
-trait GetInfo {
-    fn get_info(&self);
-}
-impl<T: Debug> GetInfo for T {
-    fn get_info(&self) {
-        let output = format!("{:#?}", self);
-        li!("{}", output);
-    }
-}
 
-impl Default for Comntroller {
-    fn default() -> Self {
-        Self::new()
-    }
-}

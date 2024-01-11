@@ -1,20 +1,13 @@
 pub mod socket;
 pub mod termometr;
+pub mod infogetter;
 use log::info as li;
-use socket::*;
-use std::{
-    collections::HashMap,
-    fmt::{self, Display, Formatter},
-};
-use termometr::*;
+use socket::Socket;
+use termometr::Termometr;
+use std::collections::HashMap;
 use thiserror::Error;
-
-#[derive(Debug, PartialEq)]
-pub enum Device {
-    SocketDevice(Socket),
-    TermometrDevice(Termometr),
-}
-
+use crate::home_router::device::Device;
+use crate::home_router::device::onlineswitcher::OnlineSwitcher;
 #[derive(PartialEq, Debug)]
 pub struct Room {
     pub name: String,
@@ -84,42 +77,6 @@ impl Room {
             output += info;
         }
         output
-    }
-}
-
-trait OnlineSwitcher {
-    fn switch(&mut self);
-}
-impl OnlineSwitcher for Socket {
-    fn switch(&mut self) {
-        li!("Switch from {}", self.online);
-        self.online = !self.online;
-    }
-}
-impl OnlineSwitcher for Termometr {
-    fn switch(&mut self) {
-        li!("Switch from {}", self.online);
-        self.online = !self.online;
-    }
-}
-impl Display for Device {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        match self {
-            Device::SocketDevice(socket) => {
-                write!(
-                    f,
-                    "Soket: Power: {} | Online: {}",
-                    socket.power, socket.online
-                )
-            }
-            Device::TermometrDevice(termometr) => {
-                write!(
-                    f,
-                    "Termomert: Temperature: {} | Online: {}",
-                    termometr.temperature, termometr.online
-                )
-            }
-        }
     }
 }
 

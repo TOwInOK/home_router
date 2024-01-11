@@ -1,6 +1,6 @@
 pub mod home_router;
 use home_router::Comntroller;
-use log::info as li;
+use log::{info as li, trace as lt};
 fn main() {
     pretty_env_logger::formatted_builder().filter_level(log::LevelFilter::Trace).init();
     let mut hub = Comntroller::new();
@@ -26,7 +26,7 @@ fn main() {
     hub.device_list("Test1".to_string());
     li!("Пример поиска устройства");
     hub.get_device_state("Test1".to_string(), "name".to_string());
-    li!("Создаём отчёт по всем комнатам");
+    lt!("Создаём отчёт по всем комнатам");
     let report = hub.create_report();
-    li!("{}", report);
+    lt!("{}", report);
 }
